@@ -543,7 +543,6 @@ export default function HeadSoccerGame() {
       // Para otros jugadores, usar el sonido de multitud genérico
       if (crowdCheerRef.current?.play) {
         try {
-          crowdCheerRef.current.play()
         } catch (error) {
           console.log("Could not play crowd cheer sound:", error)
         }
