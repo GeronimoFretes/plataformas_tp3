@@ -304,6 +304,8 @@ export default function HeadSoccerGame() {
   const mirthaGoalSoundRef = useRef<HTMLAudioElement | null>(null)
   // Flag to control if Mirtha's sound is playing
   const mirthaSoundPlayingRef = useRef<boolean>(false)
+  // Looping match-background music
+  const bgMusicRef = useRef<HTMLAudioElement | null>(null);
 
   // Update the useEffect that loads audio files to include Messi's sound (around line 1007)
   useEffect(() => {
@@ -425,10 +427,28 @@ export default function HeadSoccerGame() {
         mirthaSoundPlayingRef.current = false
       })
       mirthaGoalSoundRef.current = mirthaSound
+
+      const bg = new Audio("/match-loop.mp3")
+      bg.loop = true
+      bg.volume = 0.2
+      bgMusicRef.current = bg
     } catch (error) {
       console.log("Could not create audio elements:", error)
     }
   }, [])
+
+  useEffect(() => {
+    const bg = bgMusicRef.current
+    if (!bg) return
+    if (gameState.mode === "playing") {
+      bg.currentTime = 0
+      bg.play().catch((e) => console.log("BG music error", e))
+    } else {
+      bg.pause()
+      bg.currentTime = 0
+    }
+    return () => bg.pause()
+  }, [gameState.mode])
 
   // Update the triggerGoalCelebration function to play Messi's sound when he scores (around line 1060)
   const triggerGoalCelebration = (scorer: "player1" | "player2") => {
